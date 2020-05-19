@@ -56,29 +56,25 @@ class ViewController : UIViewController, CNContactPickerDelegate, CNContactViewC
                     var premoi : CNContact!
                     switch which {
                     case 1:
-                        let pred = CNContact.predicateForContacts(matchingName:"Matt")
-                        var matts = try CNContactStore().unifiedContacts(matching:pred, keysToFetch: [
+                        let pred = CNContact.predicateForContacts(matchingName:"Matt Neuburg") // "Neuburg Matt" works too etc.
+                        let matts = try CNContactStore().unifiedContacts(matching:pred, keysToFetch: [
                             CNContactFamilyNameKey as CNKeyDescriptor, CNContactGivenNameKey as CNKeyDescriptor
                             ])
-                        matts = matts.filter{$0.familyName == "Neuburg"}
                         guard let moi = matts.first else {
                             print("couldn't find myself")
                             return
                         }
                         premoi = moi
                     case 2:
-                        let pred = CNContact.predicateForContacts(matchingName:"Matt")
+                        let pred = CNContact.predicateForContacts(matchingName:"Matt Neuburg")
                         let req = CNContactFetchRequest(keysToFetch: [
                             CNContactFamilyNameKey as CNKeyDescriptor, CNContactGivenNameKey as CNKeyDescriptor
                             ])
                         req.predicate = pred
                         var matt : CNContact? = nil
-                        try CNContactStore().enumerateContacts(with:req) {
-                            con, stop in
-                            if con.familyName == "Neuburg" {
-                                matt = con
-                                stop.pointee = true
-                            }
+                        try CNContactStore().enumerateContacts(with:req) { con, stop in
+                            matt = con
+                            stop.pointee = true
                         }
                         guard let moi = matt else {
                             print("couldn't find myself")
@@ -113,7 +109,7 @@ class ViewController : UIViewController, CNContactPickerDelegate, CNContactViewC
                     
                     // intriguing: you can find the pieces of a physical address
                     do {
-                        let pred = CNContact.predicateForContacts(matchingName:"Charlotte")
+                        let pred = CNContact.predicateForContacts(matchingName:"Charlotte Wilson")
                         let c = try CNContactStore().unifiedContacts(matching: pred, keysToFetch: [CNContactPostalAddressesKey as CNKeyDescriptor])[0]
                         let addr = c.postalAddresses[0]
                         let form = CNPostalAddressFormatter()
@@ -125,9 +121,12 @@ class ViewController : UIViewController, CNContactPickerDelegate, CNContactViewC
                             if let val = result[key] as? String {
                                 if val == "country" {
                                     // r is the range of the country name
-                                    let country = s.substring(with: r)
-                                    print(country) // New Zealand
-                                    // ...
+                                    print("country is:", s.substring(with: r))
+                                    if let mas = attr.mutableCopy() as? NSMutableAttributedString {
+                                        mas.addAttributes([.underlineStyle:NSUnderlineStyle.single.rawValue], range: r)
+                                        print(mas)
+                                        print(mas.string)
+                                    }
                                     stop.pointee = true
                                 }
                             }
@@ -203,7 +202,7 @@ class ViewController : UIViewController, CNContactPickerDelegate, CNContactViewC
             if status == .authorized {
                 print("getting from store")
                 do {
-                    let pred = CNContact.predicateForContacts(matchingName: "Snidely")
+                    let pred = CNContact.predicateForContacts(matchingName: "Snidely Whiplash")
                     let keys = CNContactViewController.descriptorForRequiredKeys()
                     let snides = try CNContactStore().unifiedContacts(matching: pred, keysToFetch: [keys])
                     guard let snide1 = snides.first else {
@@ -226,6 +225,10 @@ class ViewController : UIViewController, CNContactPickerDelegate, CNContactViewC
                         snide = snide1
                     }
                 }
+            }
+            if snide == nil {
+                print("you didn't do the experiment properly, snide is nil")
+                return
             }
             
             let vc = CNContactViewController(for:snide)
@@ -259,7 +262,9 @@ class ViewController : UIViewController, CNContactPickerDelegate, CNContactViewC
         // con.imageData = UIImage(named:"snidely")!.pngData() // works
         let npvc = CNContactViewController(forNewContact: con)
         npvc.delegate = self
-        self.present(UINavigationController(rootViewController: npvc), animated:true)
+        // but there's a bug in iOS 13; you can't dismiss the thing if the keyboard is showing
+        let nav = UINavigationController(rootViewController: npvc)
+        self.present(nav, animated:true)
     }
     
     @IBAction func doUnknownPerson (_ sender: Any) {
@@ -274,7 +279,10 @@ class ViewController : UIViewController, CNContactPickerDelegate, CNContactViewC
         unkvc.delegate = self
         unkvc.allowsActions = true
         // unkvc.displayedPropertyKeys = []
+        unkvc.edgesForExtendedLayout = [] // yuck, try to prevent bug in iOS 13
+        self.navigationController?.view.backgroundColor = .white // ditto
         self.navigationController?.pushViewController(unkvc, animated: true)
+        // self.present(UINavigationController(rootViewController:unkvc), animated:true)
     }
 
 

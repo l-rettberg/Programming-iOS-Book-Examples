@@ -49,8 +49,10 @@ func checkForMusicLibraryAccess(andThen f:(()->())? = nil) {
         // do nothing
         break
     case .denied:
-        // do nothing, or beg the user to authorize us in Settings
         break
+        // do nothing, or beg the user to authorize us in Settings
+        let url = URL(string:UIApplication.openSettingsURLString)!
+        UIApplication.shared.open(url)
     @unknown default: fatalError()
     }
 }
@@ -58,13 +60,13 @@ func checkForMusicLibraryAccess(andThen f:(()->())? = nil) {
 class ViewController: UIViewController {
     
     @IBOutlet var label : UILabel!
-    var timer : Timer!
+    var timer : Timer?
     @IBOutlet var prog : UIProgressView!
     @IBOutlet var vv : MPVolumeView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
-                
+        
         let sz = CGSize(20,20)
         let r = UIGraphicsImageRenderer(size:sz)
         let im1 = r.image {
@@ -107,21 +109,15 @@ class ViewController: UIViewController {
         self.vv.setVolumeThumbImage(thumb, for:.normal)
         
         
-        NotificationCenter.default.addObserver(self, selector:#selector(wirelessChanged),
-            name:.MPVolumeViewWirelessRoutesAvailableDidChange,
+        NotificationCenter.default.addObserver(
+            self,
+            selector:#selector(wirelessChanged),
+            name:.AVRouteDetectorMultipleRoutesDetectedDidChange,
             object:nil)
-        NotificationCenter.default.addObserver(self,
-            selector:#selector(wirelessChanged2),
-            name:.MPVolumeViewWirelessRouteActiveDidChange,
-            object:nil)
-        
     }
     
     @objc func wirelessChanged(_ n:Notification) {
-        print("wireless change \(n.userInfo as Any)")
-    }
-    @objc func wirelessChanged2(_ n:Notification) {
-        print("wireless active change \(n.userInfo as Any)")
+        print("route change \(n.userInfo as Any)")
     }
     
     @objc func dummy() {
@@ -196,17 +192,33 @@ class ViewController: UIViewController {
             }
         }
     }
+    
+    let player = MPMusicPlayerController.applicationQueuePlayer
+    
     @IBAction func doStop(_ sender: Any) {
-        let player = MPMusicPlayerController.applicationQueuePlayer
-        player.stop()
+        print("invalidating timer, stopping player")
+        self.timer?.invalidate()
+        self.timer = nil
+        if self.player.playbackState == .playing {
+            self.player.stop()
+        }
+        delay(1) {
+            // let's find out what this does to the queue
+            self.player.perform(queueTransaction: { q in
+                print(q.items.count, q.items.map {$0.title ?? "no title"})
+                // okay so it looks like it no longer empties the queue
+                // so there is now no difference between pausing and stopping?
+            }, completionHandler: {_,_ in})
+        }
     }
     
     @IBAction func doPlayShortSongs (_ sender: Any) {
+        print("do play short songs")
         checkForMusicLibraryAccess {
             // configure notification on main queue
-            let player = MPMusicPlayerController.applicationQueuePlayer
-            player.beginGeneratingPlaybackNotifications()
-            NotificationCenter.default.addObserver(self, selector: #selector(self.changed), name: .MPMusicPlayerControllerNowPlayingItemDidChange, object: player)
+            self.player.beginGeneratingPlaybackNotifications()
+            NotificationCenter.default.removeObserver(self) // let's not add ourselves twice by mistake eh
+            NotificationCenter.default.addObserver(self, selector: #selector(self.changed), name: .MPMusicPlayerControllerNowPlayingItemDidChange, object: self.player)
             
             // get off main queue, allow button to unhighlight
             DispatchQueue.global(qos:.userInitiated).async {
@@ -237,26 +249,18 @@ class ViewController: UIViewController {
                 DispatchQueue.main.async {
                     
                     print("stopping")
-                    player.stop()
-                    print("setting shuffle mode")
-                    player.shuffleMode = .songs
-                    print("setting the queue")
-                    player.setQueue(with:queue)
-                    // no need to use this elaborate approach here, probably
-                    print("delaying")
-                    delay(0.2) {
-                        print("preparing to play")
-                        player.prepareToPlay { err in
-                            if err == nil {
-                                print("playing")
-                                player.play()
-                                
-                                self.timer = Timer.scheduledTimer(timeInterval:1, target: self, selector: #selector(self.timerFired), userInfo: nil, repeats: true)
-                                self.timer.tolerance = 0.1
-                                
-                            }
-                        }
+                    if self.player.playbackState == .playing {
+                        self.player.stop()
                     }
+                    print("setting shuffle mode")
+                    self.player.shuffleMode = .songs
+                    
+                    self.player.setQueue(with:queue)
+                    print("playing")
+                    self.player.play()
+                    print("starting time")
+                    self.timer = Timer.scheduledTimer(timeInterval:1, target: self, selector: #selector(self.timerFired), userInfo: nil, repeats: true)
+                    self.timer?.tolerance = 0.1
                 }
             }
             
@@ -269,21 +273,22 @@ class ViewController: UIViewController {
             self.timer?.fire() // looks better if we fire timer now
         }
         self.label.text = ""
-        let player = MPMusicPlayerController.applicationQueuePlayer
+        let player = self.player
         guard let obj = n.object, obj as AnyObject === player else { return } // just playing safe
         guard let title = player.nowPlayingItem?.title else {return}
         if player.playbackState != .playing {print("stopped"); return}
         let ix = player.indexOfNowPlayingItem
         guard ix != NSNotFound else {return}
         // new, we can get the queue!
-        player.perform(queueTransaction: { _ in }) { q,_ in
+        player.perform(queueTransaction: { q in
             print(q.items.count, q.items.map {$0.title ?? "no title"})
             self.label.text = "\(ix+1) of \(q.items.count): \(title)"
-        }
+        }, completionHandler: {_,_ in})
     }
     
     @objc func timerFired(_: Any) {
-        let player = MPMusicPlayerController.applicationQueuePlayer
+        print("timer fired")
+        let player = self.player
         guard let item = player.nowPlayingItem, player.playbackState != .stopped else {
             self.prog.isHidden = true
             return
@@ -293,20 +298,19 @@ class ViewController: UIViewController {
         let total = item.playbackDuration
         self.prog.progress = Float(current / total)
     }
-
-    
+        
 }
 
 class MyVolumeView : MPVolumeView {
 
     
     override func volumeSliderRect(forBounds bounds: CGRect) -> CGRect {
-        print("slider rect", bounds)
+        // print("slider rect", bounds)
         return super.volumeSliderRect(forBounds: bounds)
     }
     
     override func volumeThumbRect(forBounds bounds: CGRect, volumeSliderRect rect: CGRect, value: Float) -> CGRect {
-        print("thumb rect", value)
+        // print("thumb rect", value)
         return super.volumeThumbRect(forBounds: bounds, volumeSliderRect: rect, value: value)
     }
 

@@ -15,7 +15,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, URLSessionDownloadDelegat
     lazy var session : URLSession = {
         let id = "com.neuburg.matt.backgroundDownload"
         let config = URLSessionConfiguration.background(withIdentifier: id)
-        config.allowsCellularAccess = false
+        config.allowsExpensiveNetworkAccess = false
         // could set config.isDiscretionary here
         let sess = URLSession(
             configuration: config, delegate: self, delegateQueue: .main)
@@ -73,6 +73,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, URLSessionDownloadDelegat
     func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
         os_log("did complete %d", log: log, UIApplication.shared.applicationState.rawValue)
         os_log("%{public}@", log: log, #function)
+        if let err = error {
+            os_log("%{public}@", log: log, err as NSError)
+        }
     }
     
     // === this is the Really Interesting Part

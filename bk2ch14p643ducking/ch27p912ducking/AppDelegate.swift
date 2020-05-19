@@ -5,6 +5,7 @@ import AVFoundation
 @UIApplicationMain
 class AppDelegate : UIResponder, UIApplicationDelegate {
     var window : UIWindow?
+    var ob : NSKeyValueObservation?
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]?) -> Bool {
         
@@ -14,6 +15,12 @@ class AppDelegate : UIResponder, UIApplicationDelegate {
         let cat = AVAudioSession.sharedInstance().category
         print(cat)
         // default is solo ambient
+        
+        let sess = AVAudioSession.sharedInstance()
+        try? sess.setCategory(.ambient, mode:.default)
+        try? sess.setActive(true)
+        print("secondary hint? ", sess.secondaryAudioShouldBeSilencedHint)
+
         
         // deliberate leak here
         
@@ -27,8 +34,9 @@ class AppDelegate : UIResponder, UIApplicationDelegate {
         // we should pause our sound (doesn't happen automatically)
         
         NotificationCenter.default.addObserver(forName:
-            AVAudioSession.interruptionNotification, object: nil, queue: nil) {
+        AVAudioSession.interruptionNotification, object: nil, queue: nil) {
                 n in
+                // sure takes a long time for end interruption notification arrive
                 let why = n.userInfo![AVAudioSessionInterruptionTypeKey] as! UInt
                 let type = AVAudioSession.InterruptionType(rawValue: why)!
                 switch type {
@@ -48,6 +56,7 @@ class AppDelegate : UIResponder, UIApplicationDelegate {
         }
         
         // use control center to test, e.g. start and stop a Music song
+        // need to be _ambient_ (not solo ambient) to get this
         
         NotificationCenter.default.addObserver(forName:
             AVAudioSession.silenceSecondaryAudioHintNotification, object: nil, queue: nil) { n in
@@ -62,12 +71,18 @@ class AppDelegate : UIResponder, UIApplicationDelegate {
                 }
         }
         
-        
+        let ob = AVAudioSession.sharedInstance().observe(\.promptStyle) { (sess, ch) in
+            print(ch) // never prints so I guess I don't know the circumstances
+        }
+        self.ob = ob
+                
         return true
     }
     
     func applicationDidBecomeActive(_ application: UIApplication) {
         print("app became active")
+        let sess = AVAudioSession.sharedInstance()
+        print("secondary hint? ", sess.secondaryAudioShouldBeSilencedHint)
     }
     
     func applicationWillResignActive(_ application: UIApplication) {

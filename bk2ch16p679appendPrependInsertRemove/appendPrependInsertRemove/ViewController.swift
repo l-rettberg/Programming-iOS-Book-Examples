@@ -35,8 +35,32 @@ func checkForMusicLibraryAccess(andThen f:(()->())? = nil) {
 class ViewController: UIViewController {
     let player = MPMusicPlayerController.applicationQueuePlayer
     // let player = MPMusicPlayerController.systemMusicPlayer
+    var ob : NSObjectProtocol?
+    var lock = false
     override func viewDidLoad() {
         super.viewDidLoad()
+        let ob = NotificationCenter.default.addObserver(
+            forName: .MPMusicPlayerControllerQueueDidChange,
+            object: self.player, queue: OperationQueue.main) { n in
+                // okay, after hours of testing I determined that
+                // implementing this method to call `player.perform(queueTransaction:)`,
+                // even empty, will cause a crash or other failure with the player
+                // my attempts to work around this have failed
+                // okay, I think the reason is that calling player.perform itself changes the queue!
+                // but I seem to be unable to set up a lock to prevent overlap
+                // this crude pseudo-lock seems to work!
+                print("change")
+                if self.lock { return }
+                self.lock = true
+                self.player.perform(queueTransaction: {q in
+                    NSLog("perform")
+                    print(q.items.map{$0.title!})
+                }, completionHandler: {_,_ in
+                    NSLog("completion")
+                    self.lock = false
+                })
+        }
+        self.ob = ob
         self.baseQueue()
     }
     
@@ -62,17 +86,16 @@ class ViewController: UIViewController {
             }
             print("got \(shorties.count) short songs")
             let queue = MPMediaItemCollection(items:shorties)
-            let player = self.player
-            player.stop()
-            player.setQueue(with:queue)
-            delay(0.2) {
-                // player.prepareToPlay() // causes the queue to take effect
-                player.prepareToPlay() { err in
-                    
-                }
+            if self.player.playbackState == .playing {
+                self.player.stop()
+            }
+            print("setting queue")
+            self.player.setQueue(with:queue)
+            delay(0.2) { // definitely need this here
+                print("playing")
+                self.player.play()
             }
         }
-
     }
     
     func createDesc() -> MPMusicPlayerMediaItemQueueDescriptor {
@@ -93,16 +116,14 @@ class ViewController: UIViewController {
     
     @IBAction func doAppend(_ sender: Any) {
         checkForMusicLibraryAccess {
-            let player = self.player
-            player.append(self.createDesc())
-            delay(0.2) { // can't do this too soon or we "time out"
-                player.perform(queueTransaction: {q in
-                    print(q.items.map{$0.title!})
-                }) {q, err in
-                    if let err = err { print(err) }
-                }
-            }
-            // correct way, instead of delay, is probably to use MPMusicPlayerControllerQueueDidChange notification
+            print("appending")
+            self.player.append(self.createDesc())
+            // this fails because it is too soon, the change has not happened yet
+//            self.player.perform(queueTransaction: {q in
+//            }, completionHandler: {q,_ in
+//                print(q.items.map{$0.title!})
+//            })
+
         }
     }
     
@@ -110,66 +131,60 @@ class ViewController: UIViewController {
     // that way, you see that prepend means insert after currently playing item
     @IBAction func doPrepend(_ sender: Any) {
         checkForMusicLibraryAccess {
-            let player = self.player
-            player.prepend(self.createDesc())
-            delay(0.2) { // can't do this too soon or we "time out"
-                player.perform(queueTransaction: {q in
-                    print(q.items.map{$0.title!})
-                }) {q, err in
-                    if let err = err { print(err) }
-                }
-            }
+            print("prepending")
+            self.player.prepend(self.createDesc()) // works correctly, though I sometimes hear a glitch at that moment
+            // this fails because it is too soon, the change has not happened yet
+//            self.player.perform(queueTransaction: {q in
+//            }, completionHandler: {q,_ in
+//                print(q.items.map{$0.title!})
+//            })
         }
     }
 
     @IBAction func doInsert(_ sender: Any) {
         checkForMusicLibraryAccess {
             let qd = self.createDesc()
-            let player = self.player
-            player.perform(queueTransaction: {q in
-                print("before:", q.items.map{$0.title!})
-                q.insert(qd, after:q.items.last!) // bug: if `after:` is not nil, nothing happens
+
+            self.player.perform(queueTransaction: {q in
+                print("inserting")
+                q.insert(qd, after:q.items[3]) // okay, they fixed that one anyway! this works
+                // plus there is no audible glitch, nice
             }) {q, err in
-                // well, dammit, there's another bug!
-                // the queue does not reflect the change we just made!
-                if let err = err { print(err) }
-                print("after:", q.items.map{$0.title!})
-                delay(0.2) {
-                    player.perform(queueTransaction: { qq in
-                        print("after after:", qq.items.map{$0.title!})
-                    }) { _,_ in }
-                }
+                if let err = err { print("error", err) }
+                // and they fixed the delay issue for this one!
+                print("and the queue is now")
+                print(q.items.map{$0.title!})
             }
         }
     }
     
     @IBAction func doRemove(_ sender: Any) {
         checkForMusicLibraryAccess {
-            let player = self.player
-            player.perform(queueTransaction: {q in
-                print("before:", q.items.map{$0.title!})
-                q.remove(q.items[3])
-            }) {q, err in
-                // same bug; the change is not reflected correctly
-                if let err = err { print(err) }
-                print("after:", q.items.map{$0.title!})
-                delay(0.2) {
-                    player.perform(queueTransaction: { qq in
-                        print("after after:", qq.items.map{$0.title!})
-                    }) { _,_ in }
+            self.player.perform(queueTransaction: {q in
+            }, completionHandler: {q,_ in
+                print("before removing")
+                print(q.items.map{$0.title!})
+                self.player.perform(queueTransaction: {q in
+                    print("removing")
+                    q.remove(q.items[3])
+                }) {q, err in
+                    if let err = err { print("error", err) }
+                    print("and the queue is now")
+                    print(q.items.map{$0.title!})
                 }
-            }
+            })
         }
     }
 
     @IBAction func doStop(_ sender: Any) {
         let state = player.playbackState
-        print("state:", state.rawValue)
-        player.perform(queueTransaction: {q in
-            print(q.items.map{$0.title!})
-        }) {q, err in
-            if let err = err { print(err) }
-        }
+//        print("state:", state.rawValue)
+//        player.perform(queueTransaction: {q in
+//            print(q.items.map{$0.title!})
+//        }) {q, err in
+//            // if let err = err { print(err) }
+//            // there is _always_ an error because we didn't transact
+//        }
 
         if state == .playing {
             player.pause()

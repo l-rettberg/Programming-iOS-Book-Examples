@@ -10,12 +10,12 @@
 		3223A4F61832FB3B00F6FED0 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3223A4F41832FB3B00F6FED0 /* Main.storyboard */; };
 		3223A4F91832FB3B00F6FED0 /* PeopleGroupsCoreData.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 3223A4F71832FB3B00F6FED0 /* PeopleGroupsCoreData.xcdatamodeld */; };
 		3223A5011832FB3B00F6FED0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3223A5001832FB3B00F6FED0 /* Assets.xcassets */; };
-		3223A5261832FBD600F6FED0 /* PeopleLister.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3223A5221832FBD600F6FED0 /* PeopleLister.xib */; };
 		3223A5271832FBD600F6FED0 /* PersonCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3223A5231832FBD600F6FED0 /* PersonCell.xib */; };
 		326C01C019B236C7004331C7 /* PeopleLister.swift in Sources */ = {isa = PBXBuildFile; fileRef = 326C01BF19B236C7004331C7 /* PeopleLister.swift */; };
 		329B44B219B24C610086C7A6 /* GroupLister.swift in Sources */ = {isa = PBXBuildFile; fileRef = 329B44B119B24C610086C7A6 /* GroupLister.swift */; };
 		329B44E419B252C70086C7A6 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 329B44E319B252C70086C7A6 /* AppDelegate.swift */; };
 		32D7150B1BCB2BD8005CFAFE /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 32D7150A1BCB2BD8005CFAFE /* LaunchScreen.storyboard */; };
+		8187B7ED235CE55A00F825D5 /* PeopleLister.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8187B7EC235CE55A00F825D5 /* PeopleLister.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,12 +24,12 @@
 		3223A4F51832FB3B00F6FED0 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		3223A4F81832FB3B00F6FED0 /* PeopleGroupsCoreData.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = PeopleGroupsCoreData.xcdatamodel; sourceTree = "<group>"; };
 		3223A5001832FB3B00F6FED0 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		3223A5221832FBD600F6FED0 /* PeopleLister.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PeopleLister.xib; sourceTree = "<group>"; };
 		3223A5231832FBD600F6FED0 /* PersonCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PersonCell.xib; sourceTree = "<group>"; };
 		326C01BF19B236C7004331C7 /* PeopleLister.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PeopleLister.swift; sourceTree = "<group>"; };
 		329B44B119B24C610086C7A6 /* GroupLister.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GroupLister.swift; sourceTree = "<group>"; };
 		329B44E319B252C70086C7A6 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		32D7150A1BCB2BD8005CFAFE /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
+		8187B7EC235CE55A00F825D5 /* PeopleLister.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = PeopleLister.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -66,7 +66,7 @@
 				3223A4F41832FB3B00F6FED0 /* Main.storyboard */,
 				329B44B119B24C610086C7A6 /* GroupLister.swift */,
 				326C01BF19B236C7004331C7 /* PeopleLister.swift */,
-				3223A5221832FBD600F6FED0 /* PeopleLister.xib */,
+				8187B7EC235CE55A00F825D5 /* PeopleLister.xib */,
 				3223A5231832FBD600F6FED0 /* PersonCell.xib */,
 				3223A5001832FB3B00F6FED0 /* Assets.xcassets */,
 				32D7150A1BCB2BD8005CFAFE /* LaunchScreen.storyboard */,
@@ -103,7 +103,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0700;
-				LastUpgradeCheck = 0500;
+				LastUpgradeCheck = 1120;
 				ORGANIZATIONNAME = "Matt Neuburg";
 				TargetAttributes = {
 					3223A4DC1832FB3B00F6FED0 = {
@@ -136,8 +136,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				3223A5011832FB3B00F6FED0 /* Assets.xcassets in Resources */,
-				3223A5261832FBD600F6FED0 /* PeopleLister.xib in Resources */,
 				3223A5271832FBD600F6FED0 /* PersonCell.xib in Resources */,
+				8187B7ED235CE55A00F825D5 /* PeopleLister.xib in Resources */,
 				32D7150B1BCB2BD8005CFAFE /* LaunchScreen.storyboard in Resources */,
 				3223A4F61832FB3B00F6FED0 /* Main.storyboard in Resources */,
 			);
@@ -175,23 +175,37 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
@@ -214,23 +228,36 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_INCLUDING_64_BIT)";
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = YES;
 				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
@@ -239,6 +266,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
@@ -246,15 +274,15 @@
 		3223A5191832FB3B00F6FED0 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "";
 				INFOPLIST_FILE = "ch36p1079peopleGroupsCoreData/ch36p1079peopleGroupsCoreData-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				ONLY_ACTIVE_ARCH = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.neuburg.matt.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -265,15 +293,15 @@
 		3223A51A1832FB3B00F6FED0 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "";
 				INFOPLIST_FILE = "ch36p1079peopleGroupsCoreData/ch36p1079peopleGroupsCoreData-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				ONLY_ACTIVE_ARCH = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.neuburg.matt.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				WRAPPER_EXTENSION = app;

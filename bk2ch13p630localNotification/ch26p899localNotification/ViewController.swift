@@ -2,6 +2,7 @@
 
 import UIKit
 import UserNotifications
+import os.log
 
 
 
@@ -94,6 +95,7 @@ class MyUserNotificationHelper : NSObject {
                 return
             }
             if ok {
+                print("we got authorization")
                 self.checkCategories()
             } else {
                 print("user refused authorization")
@@ -153,7 +155,7 @@ class MyUserNotificationHelper : NSObject {
     }
     
     fileprivate func createNotification() {
-        print("creating notification" + Date().description)
+        print("creating notification at ", Date())
         
         // need trigger
         let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 10, repeats: false)
@@ -249,6 +251,11 @@ extension MyUserNotificationHelper : UNUserNotificationCenterDelegate {
     
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
         
+        os_log("%{public}@ %{public}@", log: log, self, #function)
+        // the idea is to show that we are called whether we were in background or not running at all
+        // and indeed we are
+        
+        print(UIApplication.shared.applicationState.rawValue)
         let id = response.actionIdentifier // can be default, dismiss, or one of ours
         print("user action was: \(id)")
         print("on main thread", Thread.isMainThread)

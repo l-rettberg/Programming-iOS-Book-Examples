@@ -12,8 +12,22 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Override point for customization after application launch.
         let nav = self.window!.rootViewController as! UINavigationController
         let tvc = nav.topViewController as! GroupLister
-        tvc.managedObjectContext = self.persistentContainer.viewContext
+        let del = UIApplication.shared.delegate as! AppDelegate
+        tvc.managedObjectContext = del.persistentContainer.viewContext
         return true
+    }
+    
+    func saveContext() {
+        let context = self.persistentContainer.viewContext
+        if context.hasChanges {
+            if let _ = try? context.save() {
+                print("saved")
+            }
+        }
+    }
+    
+    func applicationDidEnterBackground(_ application: UIApplication) {
+        self.saveContext()
     }
     
     lazy var persistentContainer: NSPersistentContainer = {

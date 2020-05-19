@@ -10,7 +10,7 @@ class ViewController: UIViewController, URLSessionDataDelegate {
     
     lazy var session : URLSession = {
         let config = URLSessionConfiguration.ephemeral
-        config.allowsCellularAccess = false
+        config.allowsExpensiveNetworkAccess = false
         let session = URLSession(configuration: config, delegate: self, delegateQueue: .main)
         return session
         }()
@@ -39,6 +39,12 @@ class ViewController: UIViewController, URLSessionDataDelegate {
     
     func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
         print("completed: error: \(error as Any)")
+        // just testing the syntax
+        if let err = error as? URLError {
+            if err.networkUnavailableReason == .constrained {
+                print("yep")
+            }
+        }
         self.task = nil
         if error == nil {
             DispatchQueue.main.async {
